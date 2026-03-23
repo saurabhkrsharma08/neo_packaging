@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://www.neoconveyors.com
+
+# Sitemaps
+Sitemap: https://www.neoconveyors.com/sitemap.xml
