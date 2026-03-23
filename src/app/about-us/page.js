@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { connectToDatabase } from "../api/lib/dbConnect";
 import About from "../api/model/About";
 import Image from "next/image";
