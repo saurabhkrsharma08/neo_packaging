@@ -9,7 +9,7 @@ import "slick-carousel/slick/slick-theme.css";
 import styles from '../../public/styles/page.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight, faChevronLeft, faQuoteLeft, faFileText, faFilePdf } from "@fortawesome/free-solid-svg-icons";
-import classNames from "classnames"; // Optional: for cleaner class management
+import classNames from "classnames"; // Optional: for cleaner className management
 import { truncateText } from './utills/utills';
 
 export default function Home() {
@@ -213,7 +213,7 @@ export default function Home() {
                       </button>
                     </h2>
                     <div id="flush-collapseOne" className="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-                      <div className="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the first item’s accordion body.</div>
+                      <div className="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> className. This is the first item’s accordion body.</div>
                     </div>
                   </div>
                   <div className="accordion-item">
@@ -223,7 +223,7 @@ export default function Home() {
                       </button>
                     </h2>
                     <div id="flush-collapseTwo" className="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-                      <div className="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the second item’s accordion body. Let’s imagine this being filled with some actual content.</div>
+                      <div className="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> className. This is the second item’s accordion body. Let’s imagine this being filled with some actual content.</div>
                     </div>
                   </div>
                   <div className="accordion-item">
@@ -233,18 +233,18 @@ export default function Home() {
                       </button>
                     </h2>
                     <div id="flush-collapseThree" className="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-                      <div className="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the third item’s accordion body. Nothing more exciting happening here in terms of content, but just filling up the space to make it look, at least at first glance, a bit more representative of how this would look in a real-world application.</div>
+                      <div className="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> className. This is the third item’s accordion body. Nothing more exciting happening here in terms of content, but just filling up the space to make it look, at least at first glance, a bit more representative of how this would look in a real-world application.</div>
                     </div>
                   </div>
 
-                  <div class="accordion-item">
-                    <h2 class="accordion-header">
-                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseFour" aria-expanded="false" aria-controls="flush-collapseFour">
+                  <div className="accordion-item">
+                    <h2 className="accordion-header">
+                      <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseFour" aria-expanded="false" aria-controls="flush-collapseFour">
                         Proven Technology
                       </button>
                     </h2>
-                    <div id="flush-collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-                      <div class="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the third item’s accordion body. Nothing more exciting happening here in terms of content, but just filling up the space to make it look, at least at first glance, a bit more representative of how this would look in a real-world application.</div>
+                    <div id="flush-collapseFour" className="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                      <div className="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> className. This is the third item’s accordion body. Nothing more exciting happening here in terms of content, but just filling up the space to make it look, at least at first glance, a bit more representative of how this would look in a real-world application.</div>
                     </div>
                   </div>
                   <div className="accordion-item">
@@ -254,7 +254,7 @@ export default function Home() {
                       </button>
                     </h2>
                     <div id="flush-collapseFive" className="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-                      <div className="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the third item’s accordion body. Nothing more exciting happening here in terms of content, but just filling up the space to make it look, at least at first glance, a bit more representative of how this would look in a real-world application.</div>
+                      <div className="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> className. This is the third item’s accordion body. Nothing more exciting happening here in terms of content, but just filling up the space to make it look, at least at first glance, a bit more representative of how this would look in a real-world application.</div>
                     </div>
                   </div>
                 </div>
@@ -290,7 +290,7 @@ export default function Home() {
                   <div className={`${styles.homeexcellencecard} m-3`}>
                     <h3>Auditing</h3>
                     <p>After undertaking an audit of our client’s equirements, Bulk Material can design a new solution or alter the current design to optimise the material handling flow.</p>
-                    <a className="btn btn-outline-primary">Learn more  <em class="bi bi-chevron-double-right"></em> </a>
+                    <a className="btn btn-outline-primary">Learn more  <em className="bi bi-chevron-double-right"></em> </a>
                     <div className={`${styles.homeexcellencecount} my-3`}>
                       01
                     </div>
@@ -300,7 +300,7 @@ export default function Home() {
                   <div className={`${styles.homeexcellencecard} m-3`}>
                     <h3>Design</h3>
                     <p>After undertaking an audit of our client’s equirements, Bulk Material can design a new solution or alter the current design to optimise the material handling flow.</p>
-                    <a className="btn btn-outline-primary">Learn more  <em class="bi bi-chevron-double-right"></em> </a>
+                    <a className="btn btn-outline-primary">Learn more  <em className="bi bi-chevron-double-right"></em> </a>
                     <div className={`${styles.homeexcellencecount} my-3`}>
                       02
                     </div>
@@ -310,7 +310,7 @@ export default function Home() {
                   <div className={`${styles.homeexcellencecard} m-3`}>
                     <h3>Implementation</h3>
                     <p>After undertaking an audit of our client’s equirements, Bulk Material can design a new solution or alter the current design to optimise the material handling flow.</p>
-                    <a className="btn btn-outline-primary">Learn more  <em class="bi bi-chevron-double-right"></em> </a>
+                    <a className="btn btn-outline-primary">Learn more  <em className="bi bi-chevron-double-right"></em> </a>
                     <div className={`${styles.homeexcellencecount} my-3`}>
                       03
                     </div>
@@ -320,7 +320,7 @@ export default function Home() {
                   <div className={`${styles.homeexcellencecard} m-3`}>
                     <h3>Project Management</h3>
                     <p>After undertaking an audit of our client’s equirements, Bulk Material can design a new solution or alter the current design to optimise the material handling flow.</p>
-                    <a className="btn btn-outline-primary">Learn more  <em class="bi bi-chevron-double-right"></em> </a>
+                    <a className="btn btn-outline-primary">Learn more  <em className="bi bi-chevron-double-right"></em> </a>
                     <div className={`${styles.homeexcellencecount} my-3`}>
                       04
                     </div>
@@ -333,7 +333,7 @@ export default function Home() {
                   <div className={`${styles.homeexcellencecard} m-3`}>
                     <h3>Upgrades & Refurbishments</h3>
                     <p>Our engineering team will assess and evaluate your current plant and machinery and undertake to modify, upgrade or refurbish this equipment.</p>
-                    <a className="btn btn-outline-primary">Learn more  <em class="bi bi-chevron-double-right"></em> </a>
+                    <a className="btn btn-outline-primary">Learn more  <em className="bi bi-chevron-double-right"></em> </a>
                     <div className={`${styles.homeexcellencecount} my-3`}>
                       05
                     </div>
@@ -343,7 +343,7 @@ export default function Home() {
                   <div className={`${styles.homeexcellencecard} m-3`}>
                     <h3>Plant Relocation</h3>
                     <p>Bulk Material has the knowledge and experience base to relocate or move existing plants working together and organising the contractors and liaising with the client at all times to ensure a smooth transition process.</p>
-                    <a className="btn btn-outline-primary">Learn more  <em class="bi bi-chevron-double-right"></em> </a>
+                    <a className="btn btn-outline-primary">Learn more  <em className="bi bi-chevron-double-right"></em> </a>
                     <div className={`${styles.homeexcellencecount} my-3`}>
                       06
                     </div>
@@ -353,7 +353,7 @@ export default function Home() {
                   <div className={`${styles.homeexcellencecard} m-3`}>
                     <h3>Maintenance</h3>
                     <p>Bulk Material guarantees that any equipment or systems supplied into the market can be fully supported and serviced by us, through service and maintenance contracts.</p>
-                    <a className="btn btn-outline-primary">Learn more  <em class="bi bi-chevron-double-right"></em> </a>
+                    <a className="btn btn-outline-primary">Learn more  <em className="bi bi-chevron-double-right"></em> </a>
                     <div className={`${styles.homeexcellencecount} my-3`}>
                       07
                     </div>
@@ -363,7 +363,7 @@ export default function Home() {
                   <div className={`${styles.homeexcellencecard} m-3`}>
                     <h3>Spare Parts</h3>
                     <p>We supply a wide range of well-engineered original spares parts to meet our client’s requirements.</p>
-                    <a className="btn btn-outline-primary">Learn more  <em class="bi bi-chevron-double-right"></em> </a>
+                    <a className="btn btn-outline-primary">Learn more  <em className="bi bi-chevron-double-right"></em> </a>
                     <div className={`${styles.homeexcellencecount} my-3`}>
                       08
                     </div>
@@ -389,7 +389,7 @@ export default function Home() {
                 <div>
                   <a className="btn btn-outline-primary">
                     Contact us
-                    <em class="bi bi-chevron-double-right"></em>
+                    <em className="bi bi-chevron-double-right"></em>
                   </a>
                 </div>
               </div>
@@ -425,7 +425,7 @@ export default function Home() {
               </div>
             </div>
             <div className="col-12 text-end my-3">
-              <a href="/blogs" className="btn btn-outline-primary">News   <em class="bi bi-chevron-double-right"></em></a>
+              <a href="/blogs" className="btn btn-outline-primary">News   <em className="bi bi-chevron-double-right"></em></a>
             </div>
           </div>
         </div>
