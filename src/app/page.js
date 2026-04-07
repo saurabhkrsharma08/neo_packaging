@@ -21,12 +21,12 @@ export default function Home() {
     // Fetch products
     fetch('/api/product?all=true')
       .then(response => response.json())
-      .then(data => setProducts(data.slice(0, 8))); // Limit to 8 products
+      .then(data => setProducts(data?.slice(0, 8))); // Limit to 8 products
 
     // Fetch blogs
     fetch('/api/blog?all=true')
       .then(response => response.json())
-      .then(data => setBlogs(data.slice(0, 6))); // Limit to 6 blogs
+      .then(data => setBlogs(data?.slice(0, 6))); // Limit to 6 blogs
   }, []);
 
   const toggleReadMore = () => {

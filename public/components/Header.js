@@ -52,40 +52,6 @@ const Header = () => {
                   Home
                 </Link>
               </li>
-              <li className="nav-item dropdown">
-                <Link href="#" className="nav-link dropdown-toggle" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-
-                  Services<em className="bi bi-chevron-down"></em>
-                </Link>
-                <ul className="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
-                  <div className="inner-dropdown">
-                    <li className="col-12 col-lg-6">
-                      <div className="p-3 pt-0">
-                        <a className="dropdown-item" href="#">Auditing</a>
-                        <p>Our expert team will perform a detailed evaluation of your materials handling requirements.</p>
-                      </div>
-                    </li>
-                    <li className="col-12 col-lg-6">
-                      <div className="p-3 pt-0">
-                        <a className="dropdown-item" href="#">Project Management</a>
-                        <p>Turn-key project management services that deliver exceptional results for your business.</p>
-                      </div>
-                    </li>
-                    <li className="col-12 col-lg-6">
-                      <div className="p-3 pt-0">
-                        <a className="dropdown-item" href="#">Design</a>
-                        <p>Our team will design a customized solution aimed at improving the flow of materials and enhancing the overall efficiency of your?</p>
-                      </div>
-                    </li>
-                    <li className="col-12 col-lg-6">
-                      <div className="p-3 pt-0">
-                        <a className="dropdown-item" href="#">Upgrades & Refurbishments</a>
-                        <p>Neo conveyors will evaluate your current plant and machinery and undertake to modify, upgrade, or refurbish your equipment where</p>
-                      </div>
-                    </li>
-                  </div>
-                </ul>
-              </li>
 
               <li className="nav-item">
                 <Link href="/products">
@@ -94,36 +60,11 @@ const Header = () => {
                 </Link>
               </li>
 
-              <li className="nav-item dropdown">
-                <Link href="/about-us" className="nav-link dropdown-toggle" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <li className="nav-item">
+                <Link href="/about-us">
 
-                  About<em className="bi bi-chevron-down"></em>
+                  About
                 </Link>
-                <ul className="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
-                  <div className="inner-dropdown">
-                    <li className="col-12 col-lg-4">
-                      <div className="p-3 pt-0">
-                        <a className="dropdown-item" href="#">About Us</a>
-                        <p>
-                          Neoconveyors was established in 2004 by founding member and current MD, Mr Richard Nepgen. Who identified the need in the market for a specialised materials handling systems integration company.</p>
-                      </div>
-                    </li>
-                    <li className="col-12 col-lg-4">
-                      <div className="p-3 pt-0">
-                        <a className="dropdown-item" href="#">Our Team</a>
-                        <p>
-                          Our team of experts is ready to help you with your next project.</p>
-                      </div>
-                    </li>
-                    <li className="col-12 col-lg-4">
-                      <div className="p-3 pt-0">
-                        <a className="dropdown-item" href="#">Partners</a>
-                        <p>Our team will design a customized solution aimed at improving the flow of materials and enhancing the overall efficiency of your?</p>
-                      </div>
-                    </li>
-
-                  </div>
-                </ul>
               </li>
               <li className="nav-item">
                 <Link href="/blogs">
