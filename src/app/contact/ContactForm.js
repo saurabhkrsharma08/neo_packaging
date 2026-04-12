@@ -119,7 +119,7 @@ const ContactForm = () => {
       </div>
 
       <div className="col-12 text-center">
-        <button className="btn btn-outline-primary btn-lg" type="submit" disabled={isSubmitting}>
+        <button className="btn btn-outline-primary" type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Submitting..." : "Send Message"}
         </button>
       </div>

@@ -18,15 +18,29 @@ export default function Home() {
   const [blogs, setBlogs] = useState([]);
 
   useEffect(() => {
-    // Fetch products
-    fetch('/api/product?all=true')
-      .then(response => response.json())
-      .then(data => setProducts(data?.slice(0, 8))); // Limit to 8 products
+    async function loadData() {
+      try {
+        const productsResponse = await fetch('/api/product?all=true');
+        if (!productsResponse.ok) {
+          const errorText = await productsResponse.text();
+          throw new Error(`Products fetch failed: ${productsResponse.status} ${productsResponse.statusText} - ${errorText}`);
+        }
+        const productsData = await productsResponse.json();
+        setProducts(Array.isArray(productsData) ? productsData.slice(0, 8) : []);
 
-    // Fetch blogs
-    fetch('/api/blog?all=true')
-      .then(response => response.json())
-      .then(data => setBlogs(data?.slice(0, 6))); // Limit to 6 blogs
+        const blogsResponse = await fetch('/api/blog?all=true');
+        if (!blogsResponse.ok) {
+          const errorText = await blogsResponse.text();
+          throw new Error(`Blogs fetch failed: ${blogsResponse.status} ${blogsResponse.statusText} - ${errorText}`);
+        }
+        const blogsData = await blogsResponse.json();
+        setBlogs(Array.isArray(blogsData) ? blogsData.slice(0, 6) : []);
+      } catch (error) {
+        console.error('Error loading home data:', error);
+      }
+    }
+
+    loadData();
   }, []);
 
   const toggleReadMore = () => {

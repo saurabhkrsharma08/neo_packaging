@@ -1,28 +1,35 @@
 import { connectToDatabase } from '../lib/dbConnect';
 import { authorize } from '../lib/auth';
 import Product from '../model/Product';
-import { parse } from 'url';
-import { parse as parseQuery } from 'querystring';
+import { NextResponse } from 'next/server';
 
 export const config = {
   api: {
-    bodyParser: true, 
+    bodyParser: true,
   },
 };
 
 export async function GET(req) {
-  await connectToDatabase();
-  const { query } = parse(req.url);
-  const { id, all } = parseQuery(query);
+  try {
+    await connectToDatabase();
 
-  if (id) {
-    const product = await Product.findById(id);
-    return new Response(JSON.stringify(product));
-  } else if (all === 'true') {
-    const products = await Product.find({}).sort({ priority: 1, createdAt: 1 }).exec();
-    return new Response(JSON.stringify(products));
-  } else {
-    return new Response(JSON.stringify({ message: 'Invalid query parameters' }), { status: 400 });
+    const { query } = parse(req.url);
+    const { id, all } = parseQuery(query);
+
+    if (id) {
+      const product = await Product.findById(id);
+      return NextResponse.json(product || null, { status: product ? 200 : 404 });
+    }
+
+    if (all === 'true') {
+      const products = await Product.find({}).sort({ priority: 1, createdAt: 1 }).exec();
+      return NextResponse.json(products);
+    }
+
+    return NextResponse.json({ message: 'Invalid query parameters' }, { status: 400 });
+  } catch (error) {
+    console.error('Product API GET error:', error);
+    return NextResponse.json({ message: 'Failed to load products', error: error?.message ?? 'Unknown error' }, { status: 500 });
   }
 }
 

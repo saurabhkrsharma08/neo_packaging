@@ -14,7 +14,8 @@ export async function connectToDatabase() {
       });
       console.log('Connected to MongoDB');
     } catch (error) {
-      throw new Error('Failed to connect to MongoDB');
+      const details = error?.message ? `: ${error.message}` : '';
+      throw new Error(`Failed to connect to MongoDB${details}`);
     }
   }
 }
