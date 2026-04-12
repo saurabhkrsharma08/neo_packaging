@@ -87,6 +87,10 @@ function AdminPage() {
   const [blogs, setBlogs] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [about, setAbout] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [categoryForm, setCategoryForm] = useState({ name: '', description: '' });
+  const [editingCategoryId, setEditingCategoryId] = useState(null);
+  const [productDescription, setProductDescription] = useState({ title: '', description: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -110,6 +114,10 @@ function AdminPage() {
       fetchContacts();
     } else if (activeTab === 'about') {
       fetchAbout();
+    } else if (activeTab === 'categories') {
+      fetchCategories();
+    } else if (activeTab === 'description') {
+      fetchProductDescription();
     }
   }, [activeTab]); // Fetch data whenever the activeTab changes
 
@@ -150,6 +158,29 @@ function AdminPage() {
       setError('Failed to fetch contacts');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCategories = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await axios.get('/api/category?all=true');
+      setCategories(response.data);
+    } catch (err) {
+      setError('Failed to fetch categories');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchProductDescription = async () => {
+    setError('');
+    try {
+      const response = await axios.get('/api/product-description');
+      setProductDescription(response.data || { title: '', description: '' });
+    } catch (err) {
+      setError('Failed to fetch product description');
     }
   };
 
@@ -213,6 +244,85 @@ function AdminPage() {
     } else if (activeTab === 'blogs') {
       router.push('/admin/add-blog');
     }
+  };
+
+  const handleCategoryFormChange = (e) => {
+    const { name, value } = e.target;
+    setCategoryForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSaveCategory = async () => {
+    setError('');
+    setSuccessMessage('');
+    try {
+      const token = sessionStorage.getItem('token');
+      if (editingCategoryId) {
+        await axios.put(`/api/category?id=${editingCategoryId}`, categoryForm, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setSuccessMessage('Category updated successfully.');
+      } else {
+        await axios.post('/api/category', categoryForm, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setSuccessMessage('Category added successfully.');
+      }
+      setCategoryForm({ name: '', description: '' });
+      setEditingCategoryId(null);
+      fetchCategories();
+    } catch (err) {
+      setError('Failed to save category');
+    }
+  };
+
+  const handleEditCategory = (category) => {
+    setCategoryForm({ name: category.name, description: category.description || '' });
+    setEditingCategoryId(category._id);
+    setSuccessMessage('');
+    setError('');
+  };
+
+  const handleCancelCategoryEdit = () => {
+    setCategoryForm({ name: '', description: '' });
+    setEditingCategoryId(null);
+  };
+
+  const handleDeleteCategory = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this category?')) {
+      return;
+    }
+    setError('');
+    setSuccessMessage('');
+    try {
+      const token = sessionStorage.getItem('token');
+      await axios.delete(`/api/category?id=${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setSuccessMessage('Category deleted successfully.');
+      fetchCategories();
+    } catch (err) {
+      setError('Failed to delete category');
+    }
+  };
+
+  const handleSaveDescription = async () => {
+    setError('');
+    setSuccessMessage('');
+    try {
+      const token = sessionStorage.getItem('token');
+      await axios.put('/api/product-description', productDescription, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setSuccessMessage('Product description updated successfully.');
+      fetchProductDescription();
+    } catch (err) {
+      setError('Failed to save product description');
+    }
+  };
+
+  const handleDescriptionChange = (e) => {
+    const { name, value } = e.target;
+    setProductDescription((prev) => ({ ...prev, [name]: value }));
   };
 
   // --- Dnd Kit Logic for Products ---
@@ -293,6 +403,22 @@ function AdminPage() {
               onClick={() => setActiveTab('blogs')}
             >
               Blogs
+            </a>
+          </li>
+          <li className="nav-item">
+            <a
+              className={`nav-link ${activeTab === 'categories' ? 'active' : ''}`}
+              onClick={() => setActiveTab('categories')}
+            >
+              Categories
+            </a>
+          </li>
+          <li className="nav-item">
+            <a
+              className={`nav-link ${activeTab === 'description' ? 'active' : ''}`}
+              onClick={() => setActiveTab('description')}
+            >
+              Description
             </a>
           </li>
           <li className="nav-item">
@@ -422,6 +548,115 @@ function AdminPage() {
                   </tbody>
                 </table>
               )}
+            </div>
+          )}
+
+          {activeTab === 'categories' && (
+            <div className="tab-pane fade show active">
+              <div className="card mb-4">
+                <div className="card-body">
+                  <h5>{editingCategoryId ? 'Edit Category' : 'Add Category'}</h5>
+                  <div className="mb-3">
+                    <label className="form-label">Category Name</label>
+                    <input
+                      type="text"
+                      name="name"
+                      className="form-control"
+                      value={categoryForm.name}
+                      onChange={handleCategoryFormChange}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Description</label>
+                    <textarea
+                      name="description"
+                      className="form-control"
+                      rows="3"
+                      value={categoryForm.description}
+                      onChange={handleCategoryFormChange}
+                    />
+                  </div>
+                  <button className="btn btn-primary me-2" onClick={handleSaveCategory}>
+                    {editingCategoryId ? 'Update Category' : 'Add Category'}
+                  </button>
+                  {editingCategoryId && (
+                    <button className="btn btn-secondary" onClick={handleCancelCategoryEdit}>
+                      Cancel
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {loading && categories.length === 0 ? (
+                <p>Loading categories...</p>
+              ) : error ? (
+                <p className="text-danger">{error}</p>
+              ) : (
+                <table className="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Description</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {categories.map((category) => (
+                      <tr key={category._id}>
+                        <td>{category.name}</td>
+                        <td>{category.description}</td>
+                        <td>
+                          <button
+                            className="btn btn-warning btn-sm me-2"
+                            onClick={() => handleEditCategory(category)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="btn btn-danger btn-sm"
+                            onClick={() => handleDeleteCategory(category._id)}
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'description' && (
+            <div className="tab-pane fade show active">
+              <div className="card mb-4">
+                <div className="card-body">
+                  <h5>Edit Product Description</h5>
+                  <div className="mb-3">
+                    <label className="form-label">Title</label>
+                    <input
+                      type="text"
+                      name="title"
+                      className="form-control"
+                      value={productDescription.title}
+                      onChange={handleDescriptionChange}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Description</label>
+                    <textarea
+                      name="description"
+                      className="form-control"
+                      rows="6"
+                      value={productDescription.description}
+                      onChange={handleDescriptionChange}
+                    />
+                  </div>
+                  <button className="btn btn-primary" onClick={handleSaveDescription}>
+                    Save Description
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 

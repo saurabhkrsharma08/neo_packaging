@@ -16,25 +16,37 @@ export default function Home() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [products, setProducts] = useState([]);
   const [blogs, setBlogs] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     async function loadData() {
       try {
-        const productsResponse = await fetch('/api/product?all=true');
+        const [productsResponse, blogsResponse, categoriesResponse] = await Promise.all([
+          fetch('/api/product?all=true'),
+          fetch('/api/blog?all=true'),
+          fetch('/api/category?all=true'),
+        ]);
+
         if (!productsResponse.ok) {
           const errorText = await productsResponse.text();
           throw new Error(`Products fetch failed: ${productsResponse.status} ${productsResponse.statusText} - ${errorText}`);
         }
-        const productsData = await productsResponse.json();
-        setProducts(Array.isArray(productsData) ? productsData.slice(0, 8) : []);
-
-        const blogsResponse = await fetch('/api/blog?all=true');
         if (!blogsResponse.ok) {
           const errorText = await blogsResponse.text();
           throw new Error(`Blogs fetch failed: ${blogsResponse.status} ${blogsResponse.statusText} - ${errorText}`);
         }
+        if (!categoriesResponse.ok) {
+          const errorText = await categoriesResponse.text();
+          throw new Error(`Categories fetch failed: ${categoriesResponse.status} ${categoriesResponse.statusText} - ${errorText}`);
+        }
+
+        const productsData = await productsResponse.json();
         const blogsData = await blogsResponse.json();
+        const categoriesData = await categoriesResponse.json();
+
+        setProducts(Array.isArray(productsData) ? productsData.slice(0, 8) : []);
         setBlogs(Array.isArray(blogsData) ? blogsData.slice(0, 6) : []);
+        setCategories(Array.isArray(categoriesData) ? categoriesData.slice(0, 2) : []);
       } catch (error) {
         console.error('Error loading home data:', error);
       }
@@ -138,12 +150,27 @@ export default function Home() {
                       <h2>Masters of material movement</h2>
                       <p>Neo Conveyors, founded in 2007, is a leading indian manufacture of industrial conveyor systems.</p>
                       <div className="row justify-content-center mt-4">
-                        <div className="col-auto">
-                          <a href="#" className="btn text-white btn-outlined px-4">Services</a>
-                        </div>
-                        <div className="col-auto">
-                          <a href="#" className="btn text-white btn-outlined px-4">Solutions</a>
-                        </div>
+                        {categories.length > 0 ? (
+                          categories.map((category, index) => (
+                            <div className="col-auto" key={category._id || index}>
+                              <a
+                                href={`/products?category=${encodeURIComponent(category.name)}`}
+                                className="btn text-white btn-outlined px-4"
+                              >
+                                {category.name}
+                              </a>
+                            </div>
+                          ))
+                        ) : (
+                          <>
+                            <div className="col-auto">
+                              <a href="#" className="btn text-white btn-outlined px-4">Services</a>
+                            </div>
+                            <div className="col-auto">
+                              <a href="#" className="btn text-white btn-outlined px-4">Solutions</a>
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -276,7 +303,7 @@ export default function Home() {
                   The founder members of the company are Graduate Engineers, Mr.Surender Sharma, Mr. Manoj Singh, and Mr. Mahinder Singh, having 20 years of rich experience in Material Handling Systems…
                 </p>
                 <div>
-                  <a className="btn btn-outline-primary">
+                  <a href="/contact" className="btn btn-outline-primary">
                     Contact us
                     <em className="bi bi-chevron-double-right"></em>
                   </a>
@@ -300,89 +327,45 @@ export default function Home() {
             <div className="col-lg-11">
 
               <div className="row">
-                <div className="col-12 col-lg-3 d-flex">
-                  <div className={`${styles.homeexcellencecard} m-3`}>
-                    <h3>Auditing</h3>
-                    <p>After undertaking an audit of our client’s equirements, Bulk Material can design a new solution or alter the current design to optimise the material handling flow.</p>
-                    <a className="btn btn-outline-primary">Learn more  <em className="bi bi-chevron-double-right"></em> </a>
-                    <div className={`${styles.homeexcellencecount} my-3`}>
-                      01
+                {products.length > 0 ? (
+                  products.slice(0, 4).map((product, index) => (
+                    <div key={product._id || index} className="col-12 col-lg-3 d-flex">
+                      <div className={`${styles.homeexcellencecard} m-3`}>
+                        <h3>{product.title || `Product ${index + 1}`}</h3>
+                        <p>{product.shortDescription || product.description || 'High quality industrial product designed to meet your needs.'}</p>
+                        <a href={`/products/${product.slug || ''}`} className="btn btn-outline-primary">
+                          Learn more  <em className="bi bi-chevron-double-right"></em>
+                        </a>
+                        <div className={`${styles.homeexcellencecount} my-3`}>
+                          {String(index + 1).padStart(2, '0')}
+                        </div>
+                      </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="col-12 text-center py-5">
+                    <p className="mb-0">No products available yet.</p>
                   </div>
-                </div>
-                <div className="col-12 col-lg-3 d-flex">
-                  <div className={`${styles.homeexcellencecard} m-3`}>
-                    <h3>Design</h3>
-                    <p>After undertaking an audit of our client’s equirements, Bulk Material can design a new solution or alter the current design to optimise the material handling flow.</p>
-                    <a className="btn btn-outline-primary">Learn more  <em className="bi bi-chevron-double-right"></em> </a>
-                    <div className={`${styles.homeexcellencecount} my-3`}>
-                      02
-                    </div>
-                  </div>
-                </div>
-                <div className="col-12 col-lg-3 d-flex">
-                  <div className={`${styles.homeexcellencecard} m-3`}>
-                    <h3>Implementation</h3>
-                    <p>After undertaking an audit of our client’s equirements, Bulk Material can design a new solution or alter the current design to optimise the material handling flow.</p>
-                    <a className="btn btn-outline-primary">Learn more  <em className="bi bi-chevron-double-right"></em> </a>
-                    <div className={`${styles.homeexcellencecount} my-3`}>
-                      03
-                    </div>
-                  </div>
-                </div>
-                <div className="col-12 col-lg-3 d-flex">
-                  <div className={`${styles.homeexcellencecard} m-3`}>
-                    <h3>Project Management</h3>
-                    <p>After undertaking an audit of our client’s equirements, Bulk Material can design a new solution or alter the current design to optimise the material handling flow.</p>
-                    <a className="btn btn-outline-primary">Learn more  <em className="bi bi-chevron-double-right"></em> </a>
-                    <div className={`${styles.homeexcellencecount} my-3`}>
-                      04
-                    </div>
-                  </div>
-                </div>
+                )}
                 <div className="col-12 col-lg-12 my-3 d-flex">
                   <Image src={AboutUSImg} alt="Banner" className="w-100 rounded" />
                 </div>
-                <div className="col-12 col-lg-3 d-flex">
-                  <div className={`${styles.homeexcellencecard} m-3`}>
-                    <h3>Upgrades & Refurbishments</h3>
-                    <p>Our engineering team will assess and evaluate your current plant and machinery and undertake to modify, upgrade or refurbish this equipment.</p>
-                    <a className="btn btn-outline-primary">Learn more  <em className="bi bi-chevron-double-right"></em> </a>
-                    <div className={`${styles.homeexcellencecount} my-3`}>
-                      05
+                {products.length > 4 && (
+                  products.slice(4, 8).map((product, index) => (
+                    <div key={product._id || index} className="col-12 col-lg-3 d-flex">
+                      <div className={`${styles.homeexcellencecard} m-3`}>
+                        <h3>{product.title || `Product ${index + 5}`}</h3>
+                        <p>{product.shortDescription || product.description || 'High quality industrial product designed to meet your needs.'}</p>
+                        <a href={`/products/${product.slug || ''}`} className="btn btn-outline-primary">
+                          Learn more  <em className="bi bi-chevron-double-right"></em>
+                        </a>
+                        <div className={`${styles.homeexcellencecount} my-3`}>
+                          {String(index + 5).padStart(2, '0')}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-                <div className="col-12 col-lg-3 d-flex">
-                  <div className={`${styles.homeexcellencecard} m-3`}>
-                    <h3>Plant Relocation</h3>
-                    <p>Bulk Material has the knowledge and experience base to relocate or move existing plants working together and organising the contractors and liaising with the client at all times to ensure a smooth transition process.</p>
-                    <a className="btn btn-outline-primary">Learn more  <em className="bi bi-chevron-double-right"></em> </a>
-                    <div className={`${styles.homeexcellencecount} my-3`}>
-                      06
-                    </div>
-                  </div>
-                </div>
-                <div className="col-12 col-lg-3 d-flex">
-                  <div className={`${styles.homeexcellencecard} m-3`}>
-                    <h3>Maintenance</h3>
-                    <p>Bulk Material guarantees that any equipment or systems supplied into the market can be fully supported and serviced by us, through service and maintenance contracts.</p>
-                    <a className="btn btn-outline-primary">Learn more  <em className="bi bi-chevron-double-right"></em> </a>
-                    <div className={`${styles.homeexcellencecount} my-3`}>
-                      07
-                    </div>
-                  </div>
-                </div>
-                <div className="col-12 col-lg-3 d-flex">
-                  <div className={`${styles.homeexcellencecard} m-3`}>
-                    <h3>Spare Parts</h3>
-                    <p>We supply a wide range of well-engineered original spares parts to meet our client’s requirements.</p>
-                    <a className="btn btn-outline-primary">Learn more  <em className="bi bi-chevron-double-right"></em> </a>
-                    <div className={`${styles.homeexcellencecount} my-3`}>
-                      08
-                    </div>
-                  </div>
-                </div>
+                  ))
+                )}
               </div>
             </div>
 
@@ -420,22 +403,37 @@ export default function Home() {
             </div>
             <div className="col-12">
               <div className="row">
-                {blogs.map((blog, index) => (
-                  <div key={index} className={styles.homeBlogOuter}>
-                    <div className={styles.homeBlogCard}>
-                      <a href={`/blogs/${blog.slug}`}>
-                        <img src={blog.image} className="img-fluid" alt='blog' />
-                        <div className={styles.homeBlogCategory}>
-                          <div className={styles.homeBlogCategoryInner}>
-                            <div className={styles.homeBlogDate}>25 November 2025</div>
-                            <div className={styles.homeBlogTitle}>{blog.title}</div>
+                {blogs.length > 0 ? (
+                  blogs.map((blog, index) => (
+                    <div key={blog._id || index} className="col-12 col-md-6 col-lg-4 mb-4">
+                      <div className={`${styles.homeBlogOuter} h-100`}>
+                        <div className={styles.homeBlogCard}>
+                          <a href={`/blogs/${blog.slug}`} className="d-block">
+                            <img src={blog.image || '/images/default-blog.jpg'} className="img-fluid" alt={blog.title || 'Blog'} />
+                          </a>
+                          <div className={styles.homeBlogCategory}>
+                            <div className={styles.homeBlogCategoryInner}>
+                              <div className={styles.homeBlogDate}>{blog.createdAt ? new Date(blog.createdAt).toLocaleDateString() : 'Latest'}</div>
+                              <div className={styles.homeBlogTitle}>{blog.title}</div>
+                            </div>
+                          </div>
+                          <div className={styles.homeBlogSummary}>
+                            <p>{blog.shortDescription || blog.description?.slice(0, 120) || 'Read our latest update.'}</p>
+                          </div>
+                          <div className="text-end mt-2">
+                            <a href={`/blogs/${blog.slug}`} className="btn btn-outline-primary">
+                              Read more <em className="bi bi-chevron-double-right"></em>
+                            </a>
                           </div>
                         </div>
-                      </a>
+                      </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="col-12 text-center py-5">
+                    <p className="mb-0">No blog posts available yet. Check back soon.</p>
                   </div>
-
-                ))}
+                )}
               </div>
             </div>
             <div className="col-12 text-end my-3">
