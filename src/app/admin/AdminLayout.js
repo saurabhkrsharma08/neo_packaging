@@ -26,7 +26,7 @@ const AdminLayout = ({ children }) => {
           </button>
         </div>
       </header>
-      <main className="container mt-5">
+      <main className="container-fluid mt-5 height-100">
         {children}
       </main>
     </div>

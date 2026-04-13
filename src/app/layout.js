@@ -54,7 +54,7 @@ export default function RootLayout({ children }) {
         />
       </Head>
       <body>
-        <div className="container p-0">
+        <div className="container-fluid height-100 p-0">
         <ClientLayout>{children}</ClientLayout>
         </div>
       </body>
