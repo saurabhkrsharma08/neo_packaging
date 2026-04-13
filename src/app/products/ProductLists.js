@@ -4,27 +4,48 @@ import { useState, useEffect } from "react";
 import styles from '../../../public/styles/page.module.scss';
 import { truncateText } from '../utills/utills';
 
-
 const ProdcutLists = () => {
-    const [products, setProducts] = useState([]);
-  const [rangeOffered, setRangeOffered] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [productDescription, setProductDescription] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const buildCategoryCards = (items) => {
+    const counts = items.reduce((result, item) => {
+      if (!item.category) return result;
+      const key = item.category.trim();
+      result[key] = (result[key] || 0) + 1;
+      return result;
+    }, {});
+
+    return Object.entries(counts)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 2)
+      .map(([category]) => ({
+        category,
+        description: `Explore our ${category.toLowerCase()} designed for bulk material handling, automation and smooth production flow.`
+      }));
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("/api/product?all=true");
-        if (!response.ok) throw new Error("Failed to fetch products");
+        const [productResponse, descriptionResponse] = await Promise.all([
+          fetch("/api/product?all=true"),
+          fetch("/api/product-description")
+        ]);
 
-        const data = await response.json();
-        setProducts(data);
+        if (!productResponse.ok) throw new Error("Failed to fetch products");
+        if (!descriptionResponse.ok) throw new Error("Failed to fetch product description");
 
-        // Extract unique "Range Offered" categories
-        const uniqueRanges = [...new Set(data.map((p) => p.slug))];
-        const shuffledRanges = uniqueRanges.sort(() => Math.random() - 0.7);
+        const productData = await productResponse.json();
+        const descriptionData = await descriptionResponse.json();
 
-        setRangeOffered(shuffledRanges.slice(0, 7));
+        const productItems = productData || [];
+        setProducts(productItems);
+        setCategories(buildCategoryCards(productItems));
+        setProductDescription(descriptionData.description || "");
       } catch (err) {
         setError(err.message);
       } finally {
@@ -57,41 +78,44 @@ const ProdcutLists = () => {
 
       {!loading && !error && (
         <>
-          <div className="row">
-            <div className="col-lg-8">
-              <p> We specialize in the manufacture of Belt Conveyors and are one of best manufacturer and exporter of belt conveyors in India, which you can avail at Neo Conveyors at competitive price with best quality. We have a huge range of Belt Conveyors, which are in demand due to its robust construction and tensile strength. Belt Conveyors are fabricated with superior quality raw materials and standard bought out items such as Gear Box, Motors, Belts and accessories, to give high strength and durability to conveyors system.</p>
-
-              <p>Neo conveyors provide best Belt conveyors for production flow line. Belt conveyors are employed for conveying various bulk and unit loads along horizontal or slightly inclined paths and for transporting articles between various operations and are the main means of mechanical transport. Belt conveyors make material handling easy and cost effective as it improves production process and save from human error.</p>
+          <div className="row gy-4">
+            <div className="col-lg-4">
+              <div className={styles.productFeatureGrid}>
+                {categories.map((categoryCard, index) => (
+                  <div key={index} className={styles.productFeatureCard}>
+                    <h2>{categoryCard.category}</h2>
+                    <p>{categoryCard.description}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="col-lg-1"></div>
-            <div className="col-lg-3">
-              <div className="sidebar">
-                <h2 className="border-title color-black">Range Offered</h2>
-                <ul>
-                  {rangeOffered.map((range, index) => (
-                    <li key={index}><a href={`/products/${range}/`}>{range}</a></li>
-                  ))}
-                </ul>
+
+            <div className="col-lg-8">
+              <div className="row g-4">
+                {products.slice(0, 6).map((product) => (
+                  <div key={product._id} className="col-lg-6 col-md-6 col-12">
+                    <div className={styles.productCategoryCard}>
+                      <span className={styles.productCategoryLabel}>{product.category}</span>
+                      <h3>{product.name}</h3>
+                      <p>{truncateText(product.shortDescription || product.description, 120)}</p>
+                      <a href={`/products/${product.slug}/`} className="btn btn-outline-primary btn-sm">Learn More »</a>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
-          <div className="row">
-            {products.map((product) => (
-              <div key={product._id} className="col-lg-3 col-md-6 col-12 mb-3 mb-lg-4">
-                <div className={styles.homegalleryCard}>
-                  <a href={`/products/${product.slug}/`} className={styles.homegalleryLink}></a>
-                  <img src={product.image} className="img-fluid" alt={product.name} />
-                  <div className={styles.homegalleryoverlay}>
-                    <h4 aria-hidden="true">{product.name}</h4>
-                    <div className={styles.homegallerybody}>
-                      <p className="mb-5">{truncateText(product.shortDescription, 40)}</p>
-                      <a href={`/products/${product.slug}/`}><small className="color-white">Read More</small></a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="row mt-5">
+            <div className="col-12">
+              {productDescription ? (
+                productDescription.split("\n\n").map((paragraph, idx) => (
+                  <p key={idx}>{paragraph.trim()}</p>
+                ))
+              ) : (
+                <p>No description available from the backend.</p>
+              )}
+            </div>
           </div>
         </>
       )}

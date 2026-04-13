@@ -41,6 +41,9 @@ function AddEditProductPageContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [showAddCategory, setShowAddCategory] = useState(false);
+  const [newCategory, setNewCategory] = useState('');
   const router = useRouter();
   const searchParams = useSearchParams();
   const editor = useRef(null);
@@ -50,7 +53,22 @@ function AddEditProductPageContent() {
     if (id) {
       fetchProduct(id);
     }
+    fetchCategories();
   }, [searchParams]);
+
+  const fetchCategories = async () => {
+    try {
+      const token = sessionStorage.getItem('token');
+      const response = await axios.get('/api/category?all=true', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setCategories(response.data || []);
+    } catch (err) {
+      console.error('Failed to fetch categories', err);
+    }
+  };
 
   const fetchProduct = async (id) => {
     setLoading(true);
@@ -119,8 +137,23 @@ function AddEditProductPageContent() {
     }
   };
 
-  const handleBack = () => {
-    router.push('/admin');
+  const handleAddCategory = async () => {
+    if (!newCategory.trim()) return;
+    try {
+      const token = sessionStorage.getItem('token');
+      const response = await axios.post('/api/category', { name: newCategory, description: '' }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setCategories([...categories, response.data]);
+      setFormData({ ...formData, category: newCategory });
+      setNewCategory('');
+      setShowAddCategory(false);
+    } catch (err) {
+      console.error('Failed to add category', err);
+      setError('Failed to add category');
+    }
   };
 
   return (
@@ -188,14 +221,53 @@ function AddEditProductPageContent() {
           </div>
           <div className="mb-3">
             <label htmlFor="category" className="form-label">Category</label>
-            <input
-              type="text"
+            <select
               className="form-control"
               id="category"
               value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              onChange={(e) => {
+                if (e.target.value === 'add-new') {
+                  setShowAddCategory(true);
+                } else {
+                  setFormData({ ...formData, category: e.target.value });
+                  setShowAddCategory(false);
+                }
+              }}
               required
-            />
+            >
+              <option value="">Select Category</option>
+              {categories.map((cat) => (
+                <option key={cat._id} value={cat.name}>
+                  {cat.name}
+                </option>
+              ))}
+              <option value="add-new">Add New Category</option>
+            </select>
+            {showAddCategory && (
+              <div className="mt-2">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="New Category Name"
+                  value={newCategory}
+                  onChange={(e) => setNewCategory(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="btn btn-primary mt-2 me-2"
+                  onClick={handleAddCategory}
+                >
+                  Add Category
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary mt-2"
+                  onClick={() => setShowAddCategory(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
           </div>
           <div className="mb-3">
             <label htmlFor="shortDescription" className="form-label">Short Description</label>

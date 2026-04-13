@@ -1,6 +1,8 @@
 import { connectToDatabase } from '../lib/dbConnect';
 import { authorize } from '../lib/auth';
 import Product from '../model/Product';
+import { parse } from 'url';
+import { parse as parseQuery } from 'querystring';
 import { NextResponse } from 'next/server';
 
 export const config = {
