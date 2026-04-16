@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Suspense } from "react";
 import styles from '../../../public/styles/page.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilePdf, faFileText } from "@fortawesome/free-solid-svg-icons";
@@ -37,9 +38,10 @@ const Products = () => {
           <h1>Products Neo Conveyors</h1>
         </div>
       </div>
-
-     {/* Import Prodcuts List */}
-    <ProdcutLists />
+      {/* Import Products List */}
+      <Suspense fallback={<div className="container py-5"><p className="text-center">Loading products...</p></div>}>
+        <ProdcutLists />
+      </Suspense>
 
       <div className={`${styles.homebrochureSection} container-fluid mt-3 mt-lg-3`}>
         <div className="row">
