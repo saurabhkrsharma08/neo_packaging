@@ -1,50 +1,39 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { useRouter, useSearchParams } from 'next/navigation';
 import styles from '../../../public/styles/page.module.scss';
 import { truncateText } from '../utills/utills';
 
 const ProdcutLists = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const categoryFilter = searchParams.get('category');
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [productDescription, setProductDescription] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const buildCategoryCards = (items) => {
-    const counts = items.reduce((result, item) => {
-      if (!item.category) return result;
-      const key = item.category.trim();
-      result[key] = (result[key] || 0) + 1;
-      return result;
-    }, {});
-
-    return Object.entries(counts)
-      .sort(([,a], [,b]) => b - a)
-      .slice(0, 2)
-      .map(([category]) => ({
-        category,
-        description: `Explore our ${category.toLowerCase()} designed for bulk material handling, automation and smooth production flow.`
-      }));
-  };
-
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       try {
-        const [productResponse, descriptionResponse] = await Promise.all([
+        const [productResponse, categoryResponse, descriptionResponse] = await Promise.all([
           fetch("/api/product?all=true"),
+          fetch("/api/category?all=true"),
           fetch("/api/product-description")
         ]);
 
         if (!productResponse.ok) throw new Error("Failed to fetch products");
+        if (!categoryResponse.ok) throw new Error("Failed to fetch categories");
         if (!descriptionResponse.ok) throw new Error("Failed to fetch product description");
 
         const productData = await productResponse.json();
+        const categoryData = await categoryResponse.json();
         const descriptionData = await descriptionResponse.json();
 
-        const productItems = productData || [];
-        setProducts(productItems);
-        setCategories(buildCategoryCards(productItems));
+        setProducts(productData || []);
+        setCategories(categoryData || []);
         setProductDescription(descriptionData.description || "");
       } catch (err) {
         setError(err.message);
@@ -53,8 +42,13 @@ const ProdcutLists = () => {
       }
     };
 
-    fetchProducts();
+    fetchData();
   }, []);
+
+  const filteredProducts = useMemo(() => {
+    if (!categoryFilter) return products.slice(0, 6);
+    return products.filter(product => product.category === decodeURIComponent(categoryFilter));
+  }, [products, categoryFilter]);
 
   return (
     <div className="page-content py-3 mb-lg-3 py-lg-4">
@@ -64,7 +58,13 @@ const ProdcutLists = () => {
           <nav aria-label="breadcrumb">
             <ol className="breadcrumb">
               <li className="breadcrumb-item"><a href="/">Home</a></li>
-              <li className="breadcrumb-item active" aria-current="page">Products</li>
+              <li className="breadcrumb-item"><a href="/products">Products</a></li>
+              {categoryFilter && (
+                <li className="breadcrumb-item active" aria-current="page">{decodeURIComponent(categoryFilter)}</li>
+              )}
+              {!categoryFilter && (
+                <li className="breadcrumb-item active" aria-current="page">All Products</li>
+              )}
             </ol>
           </nav>
         </div>
@@ -81,10 +81,15 @@ const ProdcutLists = () => {
           <div className="row gy-4">
             <div className="col-lg-4">
               <div className={styles.productFeatureGrid}>
-                {categories.map((categoryCard, index) => (
-                  <div key={index} className={styles.productFeatureCard}>
-                    <h2>{categoryCard.category}</h2>
-                    <p>{categoryCard.description}</p>
+                {categories.map((category) => (
+                  <div 
+                    key={category._id} 
+                    className={styles.productFeatureCard}
+                    onClick={() => router.push(`/products?category=${encodeURIComponent(category.name)}`)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <h2>{category.name}</h2>
+                    <p>{category.description || `Explore our ${category.name.toLowerCase()} designed for bulk material handling, automation and smooth production flow.`}</p>
                   </div>
                 ))}
               </div>
@@ -92,7 +97,7 @@ const ProdcutLists = () => {
 
             <div className="col-lg-8">
               <div className="row g-4">
-                {products.slice(0, 6).map((product) => (
+                {filteredProducts.map((product) => (
                   <div key={product._id} className="col-lg-6 col-md-6 col-12">
                     <div className={styles.productCategoryCard}>
                       <span className={styles.productCategoryLabel}>{product.category}</span>
@@ -106,15 +111,26 @@ const ProdcutLists = () => {
             </div>
           </div>
 
+          {categoryFilter && (
+            <div className="row mt-4">
+              <div className="col-12">
+                <button 
+                  onClick={() => router.push('/products')}
+                  className="btn btn-outline-secondary"
+                >
+                  ← Clear Category Filter
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="row mt-5">
             <div className="col-12">
-              {productDescription ? (
+              {!categoryFilter && productDescription ? (
                 productDescription.split("\n\n").map((paragraph, idx) => (
                   <p key={idx}>{paragraph.trim()}</p>
                 ))
-              ) : (
-                <p>No description available from the backend.</p>
-              )}
+              ) : null}
             </div>
           </div>
         </>

@@ -156,6 +156,10 @@ function AddEditProductPageContent() {
     }
   };
 
+  const handleBack = () => {
+    router.back();
+  };
+
   return (
     <AdminLayout>
       <div className="container mt-5">

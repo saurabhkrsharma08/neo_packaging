@@ -3,8 +3,9 @@ import { connectToDatabase } from "../api/lib/dbConnect";
 import About from "../api/model/About";
 import Image from "next/image";
 import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFilePdf } from "@fortawesome/free-solid-svg-icons";
 import AboutUSImg from "../../../public/images/aboutUs-banner.jpg";
-import ProductsList from "./ProdcutList";
 
 // Dynamic metadata function
 export async function generateMetadata() {
@@ -53,12 +54,23 @@ const AboutPage = async () => {
                 </ol>
               </nav>
             </div>
-            <div className="col-lg-8" dangerouslySetInnerHTML={{ __html: about?.content || "<p>No About Us content found.</p>" }} />
-            <div className="col-lg-1"></div>
-            <div className="col-lg-3">
-              <div className="sidebar">
-                <h2 className="border-title color-black">Industries Conveyors</h2>
-                <ProductsList />
+            <div className="col-lg-4">
+              <div className="about-us-summary-card">
+                <h2>NEO CONVEYORS</h2>
+                <p>
+                  Neo Conveyors was established in 2007 by a founding member and current MD. We specialise in materials handling systems integration with a strong focus on design, project management, implementation and after-sales support.
+                </p>
+                <h5 className="about-us-summary-card__label">COMPANY PROFILE PDF</h5>
+                <Link href="/pdf/Catalog_Neo_Conveyors.pdf" target="_blank" rel="noopener noreferrer" className="btn btn-light about-us-download-btn">
+                  <FontAwesomeIcon icon={faFilePdf} className="me-2" />
+                  Download
+                </Link>
+              </div>
+            </div>
+            <div className="col-lg-8">
+              <div className="about-us-features">
+                <h2>WHY CHOOSE NEO CONVEYORS?</h2>
+                <div className="about-us-content mt-4" dangerouslySetInnerHTML={{ __html: about?.content || "<p>No About Us content found.</p>" }} />
               </div>
             </div>
           </div>
