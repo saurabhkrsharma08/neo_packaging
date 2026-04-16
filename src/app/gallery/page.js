@@ -59,34 +59,34 @@ const Gallery = () => {
               <div className="ratio ratio-16x9">
                 <iframe width="1408" height="663" src="https://www.youtube.com/embed/qG5WSeL2_tg" 
                   title="50kg Bag Stacker for Warehouse &amp; Truck Loading - The Ultimate Labor-Saving Solution | Neo Conveyors" 
-                  frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                  referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>     
+                  frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                  referrerPolicy="strict-origin-when-cross-origin" allowFullScreen>     
                 </iframe>
               </div>
             </div>
             <div className="col-lg-3 col-md-6 col-12 mb-3 mb-lg-4">
               <div className="ratio ratio-16x9">
-                <iframe width="1408" height="663" src="https://www.youtube.com/embed/YVo-KMrGlho" title="Telescopic Belt Conveyor: Boost Efficiency &amp; Save Space | Ultimate Loading/Unloading Solution" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                <iframe width="1408" height="663" src="https://www.youtube.com/embed/YVo-KMrGlho" title="Telescopic Belt Conveyor: Boost Efficiency &amp; Save Space | Ultimate Loading/Unloading Solution" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
               </div>
             </div>
             <div className="col-lg-3 col-md-6 col-12 mb-3 mb-lg-4">
               <div className="ratio ratio-16x9">
-                <iframe width="1408" height="663" src="https://www.youtube.com/embed/eJ79nHwvSug" title="Inclined Belt conveyor | Inclined belt conveyor systems | Inclined cleated belt conveyor | Conveyors" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                <iframe width="1408" height="663" src="https://www.youtube.com/embed/eJ79nHwvSug" title="Inclined Belt conveyor | Inclined belt conveyor systems | Inclined cleated belt conveyor | Conveyors" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
               </div>
             </div>
             <div className="col-lg-3 col-md-6 col-12 mb-3 mb-lg-4">
               <div className="ratio ratio-16x9">
-                <iframe width="1408" height="663" src="https://www.youtube.com/embed/J-i49fQK2Qc" title="Trough Belt conveyors for Cattle Feed Handling Delhi NCR India | Trough Belt conveyor manufacturer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                <iframe width="1408" height="663" src="https://www.youtube.com/embed/J-i49fQK2Qc" title="Trough Belt conveyors for Cattle Feed Handling Delhi NCR India | Trough Belt conveyor manufacturer" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
               </div>
             </div>
             <div className="col-lg-3 col-md-6 col-12 mb-3 mb-lg-4">
               <div className="ratio ratio-16x9">
-                <iframe width="1408" height="663" src="https://www.youtube.com/embed/DWQlRzJkKRo" title="Conveyor for food and beverage manufacturing industry | Beverage Industry Conveyors | Neo Conveyors" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                <iframe width="1408" height="663" src="https://www.youtube.com/embed/DWQlRzJkKRo" title="Conveyor for food and beverage manufacturing industry | Beverage Industry Conveyors | Neo Conveyors" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
               </div>
             </div>
             <div className="col-lg-3 col-md-6 col-12 mb-3 mb-lg-4">
               <div className="ratio ratio-16x9">
-                <iframe width="1408" height="663" src="https://www.youtube.com/embed/FIdRY6jSiJc" title="Bag Filling To Loading Through Conveyor | Loading Conveyors manufacturer India | Neo Conveyors" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                <iframe width="1408" height="663" src="https://www.youtube.com/embed/FIdRY6jSiJc" title="Bag Filling To Loading Through Conveyor | Loading Conveyors manufacturer India | Neo Conveyors" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
               </div>
             </div>
           </div>

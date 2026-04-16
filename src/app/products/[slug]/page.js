@@ -1,15 +1,21 @@
 // app/products/[slug]/page.js (Server Component)
 import ProductDetail from "./ProductDetail";
-import axios from "axios";
+import { connectToDatabase } from "../../api/lib/dbConnect";
+import Product from "../../api/model/Product";
 
 export async function generateMetadata({ params }) {
-  const { slug } = params; 
-  try {    
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"; 
-    const response = await axios.get(`${baseUrl}/api/product/${slug}`);
-    const product = response.data;
+  const { slug } = await params; 
+  try {
+    await connectToDatabase();
+    const product = await Product.findOne({ slug }).lean();
+    
+    if (!product) {
+      return {
+        title: "Product Not Found",
+        description: "The requested product could not be found.",
+      };
+    }
 
-    // Return metadata
     return {
       title: product.metaTitle || product.name,
       description: product.metaDescription || product.description,
@@ -31,7 +37,7 @@ export async function generateMetadata({ params }) {
       },
     };
   } catch (err) {
-    // Fallback metadata if fetching fails
+    console.error("Error generating metadata for product:", err);
     return {
       title: "Default Title",
       description: "Default Description",
@@ -41,13 +47,35 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function Page({ params }) {
-  const { slug } = params; 
+  const { slug } = await params; 
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://neoconveyors.vercel.app"; 
-    const response = await axios.get(`${baseUrl}/api/product/${slug}`);
-    const product = response.data;
-    return <ProductDetail product={product} />;
+    await connectToDatabase();
+    const product = await Product.findOne({ slug }).lean();
+    
+    if (!product) {
+      return <p>Product not found.</p>;
+    }
+
+    // Ensure _id is serializable
+    const serializedProduct = {
+      ...product,
+      _id: product._id?.toString() || product._id,
+    };
+
+    const relatedProducts = await Product.aggregate([
+      { $match: { slug: { $ne: slug } } }, 
+      { $sample: { size: 5 } } 
+    ]);
+
+    // Serialize aggregation results
+    const serializedRelated = relatedProducts.map(item => ({
+      ...item,
+      _id: item._id?.toString() || item._id,
+    }));
+
+    return <ProductDetail product={serializedProduct} relatedProducts={serializedRelated} />;
   } catch (err) {
+    console.error("Error loading product:", err);
     return <p>Failed to load product.</p>;
   }
 }

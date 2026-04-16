@@ -44,9 +44,9 @@ export default function Home() {
         const blogsData = await blogsResponse.json();
         const categoriesData = await categoriesResponse.json();
 
-        setProducts(Array.isArray(productsData) ? productsData.slice(0, 8) : []);
+        setProducts(Array.isArray(productsData) ? productsData : []);
         setBlogs(Array.isArray(blogsData) ? blogsData.slice(0, 6) : []);
-        setCategories(Array.isArray(categoriesData) ? categoriesData.slice(0, 2) : []);
+        setCategories(Array.isArray(categoriesData) ? categoriesData : []);
       } catch (error) {
         console.error('Error loading home data:', error);
       }
@@ -57,6 +57,42 @@ export default function Home() {
 
   const toggleReadMore = () => {
     setIsExpanded(!isExpanded);
+  };
+
+  // Get products for a specific category - ensures no duplicate products across categories
+  const getProductsByCategory = (categoryName, productsToExclude = new Set()) => {
+    return products
+      .filter(product => product.category === categoryName && !productsToExclude.has(product._id))
+      .slice(0, 6);
+  };
+
+  // Organize products by category for display without duplication
+  const getOrganizedCategoryProducts = () => {
+    const shownProductIds = new Set();
+    const categoryProducts = [];
+
+    categories.forEach((category) => {
+      const categoryProds = getProductsByCategory(category.name, shownProductIds);
+      if (categoryProds.length > 0) {
+        categoryProds.forEach(prod => shownProductIds.add(prod._id));
+        categoryProducts.push({
+          category,
+          products: categoryProds
+        });
+      }
+    });
+
+    return categoryProducts;
+  };
+
+  // Get remaining products not shown in category sliders
+  const getRemainingProducts = () => {
+    const organizedProducts = getOrganizedCategoryProducts();
+    const usedIds = new Set();
+    organizedProducts.forEach(({ products: categoryProds }) => {
+      categoryProds.forEach(prod => usedIds.add(prod._id));
+    });
+    return products.filter(p => !usedIds.has(p._id));
   };
 
   // Custom Next Arrow Component
@@ -164,10 +200,7 @@ export default function Home() {
                         ) : (
                           <>
                             <div className="col-auto">
-                              <a href="#" className="btn text-white btn-outlined px-4">Services</a>
-                            </div>
-                            <div className="col-auto">
-                              <a href="#" className="btn text-white btn-outlined px-4">Solutions</a>
+                              <a href="/products" className="btn text-white btn-outlined px-4">All Products</a>
                             </div>
                           </>
                         )}
@@ -189,7 +222,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Start Prodcut Section */}
+        {/* Start Product Section */}
         <div className="container mt-lg-3 pe-md-5 mb-md-5 mb-4">
           <div className="row justify-content-end">
             <div className="col-12 col-lg-9 text-end">
@@ -197,40 +230,42 @@ export default function Home() {
               <p className="mb-4">of custom built Industrial Conveyor Systems and automation solutions. Over the years we have successfully supplied and installed number of conveyors to various industries for different purposes.</p>
             </div>
           </div>
-          <div className="row justify-content-end">
 
-            <div className="col-lg-9">
-
-              <Slider {...Contentsettings}>
-                {products.map((product, index) => (
-                  <div key={index}
-                    className={`${index === 0 ? "active" : ""}`}>
-                    <div className={styles.homegalleryCard}>
-                      <a href={`/products/${product.slug}/`} className={styles.homegalleryLink}></a>
-                      <img src={product.image} className="img-fluid" alt={product.title} />
-                      <div className={styles.homegalleryoverlay}>
-                        <h4 aria-hidden="true">{product.title}</h4>
-                        <div className={styles.homegalleryseprator}></div>
-                        <div className={styles.homegallerybody}>
-                          <p className="mb-5">{truncateText(product.shortDescription, 40)}</p>
-                          <div className="d-flex justify-content-start gap-2">
-                            <a className="btn text-white btn-outlined" href={`/products/${product.slug}/`}>
-                              Learn more <em className="bi bi-chevron-double-right"></em>
-                            </a>
-                            <a className="btn text-white btn-outlined" href={`/products/${product.slug}/`}>
-                              Play <em className="bi bi-play-circle"></em>
-                            </a>
+          {/* Category-wise Product Sliders */}
+          {getOrganizedCategoryProducts().map(({ category, products: categoryProducts }) => (
+            <div key={category._id} className="row justify-content-end mb-5">
+              <div className="col-lg-9">
+                <h4 className="text-uppercase mb-4" style={{ fontWeight: 600, color: '#1d2c54' }}>
+                  {category.name}
+                </h4>
+                <Slider {...Contentsettings}>
+                  {categoryProducts.map((product, index) => (
+                    <div key={product._id} className={`${index === 0 ? "active" : ""}`}>
+                      <div className={styles.homegalleryCard}>
+                        <a href={`/products/${product.slug}/`} className={styles.homegalleryLink}></a>
+                        <img src={product.image} className="img-fluid" alt={product.title} />
+                        <div className={styles.homegalleryoverlay}>
+                          <h4 aria-hidden="true">{product.title}</h4>
+                          <div className={styles.homegalleryseprator}></div>
+                          <div className={styles.homegallerybody}>
+                            <p className="mb-5">{truncateText(product.shortDescription, 40)}</p>
+                            <div className="d-flex justify-content-start gap-2">
+                              <a className="btn text-white btn-outlined" href={`/products/${product.slug}/`}>
+                                Learn more <em className="bi bi-chevron-double-right"></em>
+                              </a>
+                              <a className="btn text-white btn-outlined" href={`/products/${product.slug}/`}>
+                                Play <em className="bi bi-play-circle"></em>
+                              </a>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </Slider>
-
+                  ))}
+                </Slider>
+              </div>
             </div>
-
-          </div>
+          ))}
         </div>
 
 
@@ -327,8 +362,8 @@ export default function Home() {
             <div className="col-lg-11">
 
               <div className="row">
-                {products.length > 0 ? (
-                  products.slice(0, 4).map((product, index) => (
+                {getRemainingProducts().length > 0 ? (
+                  getRemainingProducts().slice(0, 4).map((product, index) => (
                     <div key={product._id || index} className="col-12 col-lg-3 d-flex">
                       <div className={`${styles.homeexcellencecard} m-3`}>
                         <h3>{product.title || `Product ${index + 1}`}</h3>
@@ -344,14 +379,14 @@ export default function Home() {
                   ))
                 ) : (
                   <div className="col-12 text-center py-5">
-                    <p className="mb-0">No products available yet.</p>
+                    <p className="mb-0">No more products available.</p>
                   </div>
                 )}
-                <div className="col-12 col-lg-12 my-3 d-flex">
+                {/* <div className="col-12 col-lg-12 my-3 d-flex">
                   <Image src={AboutUSImg} alt="Banner" className="w-100 rounded" />
-                </div>
-                {products.length > 4 && (
-                  products.slice(4, 8).map((product, index) => (
+                </div> */}
+                {/* {getRemainingProducts().length > 4 && (
+                  getRemainingProducts().slice(4, 8).map((product, index) => (
                     <div key={product._id || index} className="col-12 col-lg-3 d-flex">
                       <div className={`${styles.homeexcellencecard} m-3`}>
                         <h3>{product.title || `Product ${index + 5}`}</h3>
@@ -365,7 +400,7 @@ export default function Home() {
                       </div>
                     </div>
                   ))
-                )}
+                )} */}
               </div>
             </div>
 
@@ -376,7 +411,7 @@ export default function Home() {
           <div className="container">
             <div className="row">
               <div className={`${styles.homeexcellenceLeft} col-lg-7 col-12`}>
-
+                <Image src={AboutUSImg} alt="Conveyor Automation" className="w-100 h-100 rounded" style={{ objectFit: 'cover' }} />
               </div>
               <div className={`${styles.homeexcellenceRight} col-lg-5 col-12`} >
 
