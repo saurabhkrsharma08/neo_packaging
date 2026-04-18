@@ -1,4 +1,4 @@
-import { writeFile } from 'fs/promises';
+import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 import { NextResponse } from 'next/server';
 
@@ -13,14 +13,21 @@ export async function POST(req) {
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const fileName =`${Date.now()}-${file.name}`;
+    
+    // Sanitize filename - remove special characters and use only alphanumeric
+    const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const fileName = `${Date.now()}-${originalName}`;
+    
     const uploadDir = path.join(process.cwd(), 'public/uploads');
     const filePath = path.join(uploadDir, fileName);
 
+    // Ensure upload directory exists on server
+    await mkdir(uploadDir, { recursive: true });
     await writeFile(filePath, buffer);
 
     return NextResponse.json({ message: 'File uploaded successfully', imageUrl: `/uploads/${fileName}` });
   } catch (error) {
+    console.error('Upload error:', error);
     return NextResponse.json({ message: 'Upload failed', error: error.message }, { status: 500 });
   }
 }

@@ -81,7 +81,7 @@ const ProdcutLists = () => {
           <div className="row gy-4">
             <div className="col-lg-4">
               <div className={styles.productFeatureGrid}>
-                {categories.map((category) => (
+                {categories.slice(0, 2).map((category) => (
                   <div 
                     key={category._id} 
                     className={styles.productFeatureCard}
@@ -103,7 +103,7 @@ const ProdcutLists = () => {
                       <span className={styles.productCategoryLabel}>{product.category}</span>
                       <h3>{product.name}</h3>
                       <p>{truncateText(product.shortDescription || product.description, 120)}</p>
-                      <a href={`/products/${product.slug}/`} className="btn btn-outline-primary btn-sm">Learn More »</a>
+                      <a href={`/${product.slug}`} className="btn btn-outline-primary btn-sm">Learn More »</a>
                     </div>
                   </div>
                 ))}

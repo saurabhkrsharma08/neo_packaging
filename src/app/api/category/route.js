@@ -16,11 +16,17 @@ export async function GET(req) {
     await connectToDatabase();
 
     const { query } = parse(req.url);
-    const { id, all } = parseQuery(query);
+    const { id, all, parent } = parseQuery(query);
 
     if (id) {
       const category = await Category.findById(id);
       return NextResponse.json(category || null, { status: category ? 200 : 404 });
+    }
+
+    if (parent) {
+      // Get sub-categories for a parent category
+      const subCategories = await Category.find({ parentCategory: parent }).sort({ name: 1 }).exec();
+      return NextResponse.json(subCategories);
     }
 
     if (all === 'true') {
@@ -50,10 +56,11 @@ export async function POST(req) {
   const category = new Category({
     name: body.name,
     description: body.description || '',
+    parentCategory: body.parentCategory || null,
   });
 
   await category.save();
-  return new Response(JSON.stringify({ message: `Category ${body.name} created!`, id: category._id }), { status: 201 });
+  return new Response(JSON.stringify({ message: `Category ${body.name} created!`, id: category._id, ...category.toObject() }), { status: 201 });
 }
 
 export async function PUT(req) {
@@ -72,6 +79,7 @@ export async function PUT(req) {
 
   await Category.findByIdAndUpdate(id, {
     name: body.name,
+    parentCategory: body.parentCategory || null,
     description: body.description || '',
   });
 

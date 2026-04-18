@@ -11,12 +11,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight, faChevronLeft, faQuoteLeft, faFileText, faFilePdf } from "@fortawesome/free-solid-svg-icons";
 import classNames from "classnames"; // Optional: for cleaner className management
 import { truncateText } from './utills/utills';
+import BlogCarousel from './components/BlogCarousel';
 
 export default function Home() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [products, setProducts] = useState([]);
   const [blogs, setBlogs] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0);
 
   useEffect(() => {
     async function loadData() {
@@ -45,7 +47,7 @@ export default function Home() {
         const categoriesData = await categoriesResponse.json();
 
         setProducts(Array.isArray(productsData) ? productsData : []);
-        setBlogs(Array.isArray(blogsData) ? blogsData.slice(0, 6) : []);
+        setBlogs(Array.isArray(blogsData) ? blogsData : []);
         setCategories(Array.isArray(categoriesData) ? categoriesData : []);
       } catch (error) {
         console.error('Error loading home data:', error);
@@ -127,22 +129,27 @@ export default function Home() {
     dots: false,
     infinite: false,
     speed: 500,
-    slidesToShow: 3,
+    slidesToShow: 4,
     slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 3000,
+    autoplay: false,
     arrows: true,
     prevArrow: <PrevArrow />,
     nextArrow: <NextArrow />,
     responsive: [
       {
-        breakpoint: 1024, // Below 1024px
+        breakpoint: 1200,
+        settings: {
+          slidesToShow: 3,
+        },
+      },
+      {
+        breakpoint: 768,
         settings: {
           slidesToShow: 2,
         },
       },
       {
-        breakpoint: 992, // Below 768px (Tablet)
+        breakpoint: 480,
         settings: {
           slidesToShow: 1,
         },
@@ -187,7 +194,7 @@ export default function Home() {
                       <p>Neo Conveyors, founded in 2007, is a leading indian manufacture of industrial conveyor systems.</p>
                       <div className="row justify-content-center mt-4">
                         {categories.length > 0 ? (
-                          categories.map((category, index) => (
+                          categories.slice(0, 2).map((category, index) => (
                             <div className="col-auto" key={category._id || index}>
                               <a
                                 href={`/products?category=${encodeURIComponent(category.name)}`}
@@ -231,43 +238,67 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Category-wise Product Sliders */}
-          {getOrganizedCategoryProducts().map(({ category, products: categoryProducts }) => (
-            <div key={category._id} className="row justify-content-end mb-5">
+          {/* Single Product Carousel with Category Tabs */}
+          {getOrganizedCategoryProducts().length > 0 && (
+            <div className="row justify-content-end mb-5">
               <div className="col-lg-9">
-                <h4 className="text-uppercase mb-4" style={{ fontWeight: 600, color: '#1d2c54' }}>
-                  {category.name}
-                </h4>
-                <Slider {...Contentsettings}>
-                  {categoryProducts.map((product, index) => (
-                    <div key={product._id} className={`${index === 0 ? "active" : ""}`}>
-                      <div className={styles.homegalleryCard}>
-                        <a href={`/products/${product.slug}/`} className={styles.homegalleryLink}></a>
-                        <img src={product.image} className="img-fluid" alt={product.title} />
-                        <div className={styles.homegalleryoverlay}>
-                          <h4 aria-hidden="true">{product.title}</h4>
-                          <div className={styles.homegalleryseprator}></div>
-                          <div className={styles.homegallerybody}>
-                            <p className="mb-5">{truncateText(product.shortDescription, 40)}</p>
-                            <div className="d-flex justify-content-start gap-2">
-                              <a className="btn text-white btn-outlined" href={`/products/${product.slug}/`}>
-                                Learn more <em className="bi bi-chevron-double-right"></em>
-                              </a>
-                              <a className="btn text-white btn-outlined" href={`/products/${product.slug}/`}>
-                                Play <em className="bi bi-play-circle"></em>
-                              </a>
+                {/* Category Tabs */}
+                <div className="d-flex gap-2 mb-4" style={{ overflowX: 'auto', paddingBottom: '10px' }}>
+                  {getOrganizedCategoryProducts().map(({ category }, index) => (
+                    <button
+                      key={category._id}
+                      onClick={() => setSelectedCategoryIndex(index)}
+                      className="btn text-nowrap"
+                      style={{
+                        backgroundColor: selectedCategoryIndex === index ? '#7a63ff' : '#f5f5f5',
+                        color: selectedCategoryIndex === index ? '#fff' : '#1d2c54',
+                        border: 'none',
+                        fontWeight: 600,
+                        padding: '10px 20px',
+                        borderRadius: '4px',
+                        transition: 'all 0.3s ease'
+                      }}
+                    >
+                      {category.name}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Carousel for Selected Category */}
+                {getOrganizedCategoryProducts()[selectedCategoryIndex] && (
+                  <div>
+                    <Slider {...Contentsettings}>
+                      {getOrganizedCategoryProducts()[selectedCategoryIndex].products.map((product, index) => {
+                        const cardNumber = String(index + 1).padStart(2, '0');
+                        return (
+                          <div key={product._id} className={`${index === 0 ? "active" : ""}`}>
+                            <div className={styles.homegalleryCard}>
+                              <div className={styles.productCounter}>{cardNumber}</div>
+                              <a href={`/${product.slug}`} className={styles.homegalleryLink}></a>
+                              <img src={product.image} className="img-fluid" alt={product.title} />
+                              <div className={styles.homegalleryoverlay}>
+                                <h4 aria-hidden="true">{product.title}</h4>
+                                <div className={styles.homegalleryseprator}></div>
+                                <div className={styles.homegallerybody}>
+                                  <p className="mb-5">{truncateText(product.shortDescription, 40)}</p>
+                                  <div className="d-flex justify-content-start gap-2">
+                                    <a className="btn text-white btn-outlined btn-sm" href={`/${product.slug}`}>
+                                      Learn more <em className="bi bi-chevron-double-right"></em>
+                                    </a>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </Slider>
+                        );
+                      })}
+                    </Slider>
+                  </div>
+                )}
               </div>
             </div>
-          ))}
+          )}
         </div>
-
 
         {/* Start Inspired Section */}
         <div className={`${styles.homeexcellenceSection} p-4 m-3`}>
@@ -368,7 +399,7 @@ export default function Home() {
                       <div className={`${styles.homeexcellencecard} m-3`}>
                         <h3>{product.title || `Product ${index + 1}`}</h3>
                         <p>{product.shortDescription || product.description || 'High quality industrial product designed to meet your needs.'}</p>
-                        <a href={`/products/${product.slug || ''}`} className="btn btn-outline-primary">
+                        <a href={`/${product.slug || ''}`} className="btn btn-outline-primary">
                           Learn more  <em className="bi bi-chevron-double-right"></em>
                         </a>
                         <div className={`${styles.homeexcellencecount} my-3`}>
@@ -429,53 +460,7 @@ export default function Home() {
           </div>
         </div>
         {/* Start Blog Section */}
-        <div className="container px-4 mt-4 mt-lg-5">
-          <div className="row">
-            <div className="col-12">
-              <h3 className="font-30 color-black text-end mt-4 mb-2 mt-lg-0 mb-lg-3">Bulk Material in the News.
-              </h3>
-              <p className=" text-end">Take a look at what we have been up to over the years.</p>
-            </div>
-            <div className="col-12">
-              <div className="row">
-                {blogs.length > 0 ? (
-                  blogs.map((blog, index) => (
-                    <div key={blog._id || index} className="col-12 col-md-6 col-lg-4 mb-4">
-                      <div className={`${styles.homeBlogOuter} h-100`}>
-                        <div className={styles.homeBlogCard}>
-                          <a href={`/blogs/${blog.slug}`} className="d-block">
-                            <img src={blog.image || '/images/default-blog.jpg'} className="img-fluid" alt={blog.title || 'Blog'} />
-                          </a>
-                          <div className={styles.homeBlogCategory}>
-                            <div className={styles.homeBlogCategoryInner}>
-                              <div className={styles.homeBlogDate}>{blog.createdAt ? new Date(blog.createdAt).toLocaleDateString() : 'Latest'}</div>
-                              <div className={styles.homeBlogTitle}>{blog.title}</div>
-                            </div>
-                          </div>
-                          <div className={styles.homeBlogSummary}>
-                            <p>{blog.shortDescription || blog.description?.slice(0, 120) || 'Read our latest update.'}</p>
-                          </div>
-                          <div className="text-end mt-2">
-                            <a href={`/blogs/${blog.slug}`} className="btn btn-outline-primary">
-                              Read more <em className="bi bi-chevron-double-right"></em>
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="col-12 text-center py-5">
-                    <p className="mb-0">No blog posts available yet. Check back soon.</p>
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="col-12 text-end my-3">
-              <a href="/blogs" className="btn btn-outline-primary">News   <em className="bi bi-chevron-double-right"></em></a>
-            </div>
-          </div>
-        </div>
+        <BlogCarousel blogs={blogs} />
       </div>
     </>
   );

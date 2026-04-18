@@ -19,12 +19,12 @@ module.exports = {
     const blogs = await resBlog.json();
 
     const productPaths = products.map((product) => ({
-      loc: `/products/${product.slug}`,
+      loc: `/${product.slug}`,
       lastmod: new Date().toISOString(),
     }));
 
     const blogPaths = blogs.map((blog) => ({
-      loc: `/blogs/${blog.slug}`,
+      loc: `/${blog.slug}`,
       lastmod: new Date().toISOString(),
     }));
 

@@ -54,7 +54,7 @@ const BlogLists = () => {
                       <div className="card-title">{blog.title}</div>
                       <div className="is-divider"></div>
                       <p className="card-text">{truncateText(blog.shortDescription, 40)}</p>
-                      <a href={`/blogs/${blog.slug}`} className="btn btn-readMore stretched-link" title={blog.title}>
+                      <a href={`/${blog.slug}`} className="btn btn-readMore stretched-link" title={blog.title}>
                         READ MORE <FontAwesomeIcon icon={faPlus} />
                       </a>
                     </div>
