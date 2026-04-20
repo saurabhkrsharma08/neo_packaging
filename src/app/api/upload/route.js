@@ -37,7 +37,7 @@ export async function POST(req) {
 
     return NextResponse.json({
       message: 'File uploaded successfully',
-      imageUrl: `/uploads/${fileName}`,
+      imageUrl: `/api/upload/${fileName}`,
     });
 
   } catch (error) {
