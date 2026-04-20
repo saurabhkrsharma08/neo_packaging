@@ -16,6 +16,7 @@ function AddEditProductPageContent() {
     url: '',
     image: '',
     category: '',
+    subCategory: '',
     shortDescription: '',
     metaTitle: '',
     metaDescription: '',
@@ -42,8 +43,11 @@ function AddEditProductPageContent() {
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
   const [showAddCategory, setShowAddCategory] = useState(false);
   const [newCategory, setNewCategory] = useState('');
+  const [showAddSubCategory, setShowAddSubCategory] = useState(false);
+  const [newSubCategory, setNewSubCategory] = useState('');
   const router = useRouter();
   const searchParams = useSearchParams();
   const editor = useRef(null);
@@ -67,6 +71,20 @@ function AddEditProductPageContent() {
       setCategories(response.data || []);
     } catch (err) {
       console.error('Failed to fetch categories', err);
+    }
+  };
+
+  const fetchSubCategories = async (categoryId) => {
+    try {
+      const token = sessionStorage.getItem('token');
+      const response = await axios.get(`/api/category?parent=${categoryId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setSubCategories(response.data || []);
+    } catch (err) {
+      console.error('Failed to fetch sub-categories', err);
     }
   };
 
@@ -156,6 +174,34 @@ function AddEditProductPageContent() {
     }
   };
 
+  const handleAddSubCategory = async () => {
+    if (!newSubCategory.trim()) return;
+    try {
+      const token = sessionStorage.getItem('token');
+      const selectedCat = categories.find(cat => cat.name === formData.category);
+      if (!selectedCat) {
+        setError('Please select a category first');
+        return;
+      }
+      const response = await axios.post('/api/category', { 
+        name: newSubCategory, 
+        description: '',
+        parentCategory: selectedCat._id 
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setSubCategories([...subCategories, response.data]);
+      setFormData({ ...formData, subCategory: newSubCategory });
+      setNewSubCategory('');
+      setShowAddSubCategory(false);
+    } catch (err) {
+      console.error('Failed to add sub-category', err);
+      setError('Failed to add sub-category');
+    }
+  };
+
   const handleBack = () => {
     router.back();
   };
@@ -233,8 +279,13 @@ function AddEditProductPageContent() {
                 if (e.target.value === 'add-new') {
                   setShowAddCategory(true);
                 } else {
-                  setFormData({ ...formData, category: e.target.value });
+                  setFormData({ ...formData, category: e.target.value, subCategory: '' });
                   setShowAddCategory(false);
+                  // Fetch sub-categories for selected category
+                  const selectedCat = categories.find(cat => cat.name === e.target.value);
+                  if (selectedCat) {
+                    fetchSubCategories(selectedCat._id);
+                  }
                 }
               }}
               required
@@ -267,6 +318,55 @@ function AddEditProductPageContent() {
                   type="button"
                   className="btn btn-secondary mt-2"
                   onClick={() => setShowAddCategory(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
+          </div>
+          <div className="mb-3">
+            <label htmlFor="subCategory" className="form-label">Sub Category</label>
+            <select
+              className="form-control"
+              id="subCategory"
+              value={formData.subCategory}
+              onChange={(e) => {
+                if (e.target.value === 'add-new') {
+                  setShowAddSubCategory(true);
+                } else {
+                  setFormData({ ...formData, subCategory: e.target.value });
+                  setShowAddSubCategory(false);
+                }
+              }}
+            >
+              <option value="">Select Sub Category (Optional)</option>
+              {subCategories.map((subCat) => (
+                <option key={subCat._id} value={subCat.name}>
+                  {subCat.name}
+                </option>
+              ))}
+              <option value="add-new">Add New Sub Category</option>
+            </select>
+            {showAddSubCategory && (
+              <div className="mt-2">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="New Sub Category Name"
+                  value={newSubCategory}
+                  onChange={(e) => setNewSubCategory(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="btn btn-primary mt-2 me-2"
+                  onClick={handleAddSubCategory}
+                >
+                  Add Sub Category
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary mt-2"
+                  onClick={() => setShowAddSubCategory(false)}
                 >
                   Cancel
                 </button>

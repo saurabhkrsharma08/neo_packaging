@@ -9,6 +9,25 @@ import { faClock, faFilePdf, faFileText, faUser } from "@fortawesome/free-solid-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from 'axios';
 
+const formatDate = (value) => {
+  if (!value) return "";
+  return new Date(value).toLocaleDateString("en-GB", { timeZone: "UTC" });
+};
+
+const formatDateTime = (value) => {
+  if (!value) return "";
+  return new Date(value).toLocaleString("en-GB", {
+    timeZone: "UTC",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
+};
+
 const BlogDetail = () => {
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -74,8 +93,8 @@ const BlogDetail = () => {
                     <div className="by-author author"><span className="d-flex"><a href="#" title='admin'>
                       <FontAwesomeIcon icon={faUser} /> Admin </a></span>
                     </div>
-                    <div className="date d-flex ms-3"><a href="#" title={new Date(blog.date).toLocaleString()}>
-                      <FontAwesomeIcon icon={faClock} /> {new Date(blog.date).toLocaleDateString()} </a>
+                    <div className="date d-flex ms-3"><a href="#" title={formatDateTime(blog.date)}>
+                      <FontAwesomeIcon icon={faClock} /> {formatDate(blog.date)} </a>
                     </div>
                   </div>
                 </div>
@@ -102,12 +121,12 @@ const BlogDetail = () => {
                 <ul className="default-wp-page">
                   {blog.previousPost && (
                     <li className="previous">
-                      <a href={`/blogs/${blog.previousPost.slug}`} rel="prev"><span className="meta-nav">←</span> {blog.previousPost.title}</a>
+                      <a href={`/${blog.previousPost.slug}`} rel="prev"><span className="meta-nav">←</span> {blog.previousPost.title}</a>
                     </li>
                   )}
                   {blog.nextPost && (
                     <li className="next">
-                      <a href={`/blogs/${blog.nextPost.slug}`} rel="next">{blog.nextPost.title} <span className="meta-nav">→</span></a>
+                      <a href={`/${blog.nextPost.slug}`} rel="next">{blog.nextPost.title} <span className="meta-nav">→</span></a>
                     </li>
                   )}
                 </ul>
@@ -123,8 +142,8 @@ const BlogDetail = () => {
                       <img src={post.image} className="img-fluid" alt={post.title} />
                       <div className="recent-post-data">
                         <div className="recent-post-title">{post.title}</div>
-                        <div className="date d-flex"><a href={`/blogs/${post.slug}`} title={new Date(post.date).toLocaleString()}>
-                          <FontAwesomeIcon icon={faClock} /> {new Date(post.date).toLocaleDateString()} </a>
+                        <div className="date d-flex"><a href={`/${post.slug}`} title={formatDateTime(post.date)}>
+                          <FontAwesomeIcon icon={faClock} /> {formatDate(post.date)} </a>
                         </div>
                       </div>
                     </div>

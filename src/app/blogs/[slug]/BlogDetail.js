@@ -8,6 +8,25 @@ import { faClock, faFilePdf, faFileText, faUser } from "@fortawesome/free-solid-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Head from "next/head";
 
+const formatDate = (value) => {
+  if (!value) return "";
+  return new Date(value).toLocaleDateString("en-GB", { timeZone: "UTC" });
+};
+
+const formatDateTime = (value) => {
+  if (!value) return "";
+  return new Date(value).toLocaleString("en-GB", {
+    timeZone: "UTC",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
+};
+
 const BlogDetail = ({ blog }) => {
   if (!blog) return <p>No blog found</p>;
 
@@ -58,8 +77,8 @@ const BlogDetail = ({ blog }) => {
                       </span>
                     </div>
                     <div className="date d-flex ms-3">
-                      <a href="#" title={new Date(blog.createdAt).toLocaleString()}>
-                        <FontAwesomeIcon icon={faClock} /> {new Date(blog.createdAt).toLocaleDateString()}
+                      <a href="#" title={formatDateTime(blog.createdAt)}>
+                        <FontAwesomeIcon icon={faClock} /> {formatDate(blog.createdAt)}
                       </a>
                     </div>
                   </div>
@@ -86,14 +105,14 @@ const BlogDetail = ({ blog }) => {
                 <ul className="default-wp-page">
                   {blog.previousPost && (
                     <li className="previous">
-                      <a href={`/blogs/${blog.previousPost.slug}`} rel="prev">
+                      <a href={`/${blog.previousPost.slug}`} rel="prev">
                         <span className="meta-nav">←</span> {blog.previousPost.title}
                       </a>
                     </li>
                   )}
                   {blog.nextPost && (
                     <li className="next">
-                      <a href={`/blogs/${blog.nextPost.slug}`} rel="next">
+                      <a href={`/${blog.nextPost.slug}`} rel="next">
                         {blog.nextPost.title} <span className="meta-nav">→</span>
                       </a>
                     </li>
@@ -107,13 +126,13 @@ const BlogDetail = ({ blog }) => {
                 <h2 className="border-title color-black">Recent Posts</h2>
                 <div className="recent-posts">
                   {blog.recentPosts?.map((post) => (
-                    <Link href={`/blogs/${post.slug}`} key={post._id} className="post">
+                    <Link href={`/${post.slug}`} key={post._id} className="post">
                       <img src={post.image} className="img-fluid" alt={post.title} />
                       <div className="recent-post-data">
                         <div className="recent-post-title">{post.title}</div>
                         <div className="date d-flex">
-                          <a href={`/blogs/${post.slug}`} title={new Date(post.createdAt).toLocaleString()}>
-                            <FontAwesomeIcon icon={faClock} /> {new Date(post.createdAt).toLocaleDateString()}
+                          <a href={`/${post.slug}`} title={formatDateTime(post.createdAt)}>
+                            <FontAwesomeIcon icon={faClock} /> {formatDate(post.createdAt)}
                           </a>
                         </div>
                       </div>

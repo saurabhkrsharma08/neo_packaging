@@ -8,6 +8,8 @@ const BlogSchema = new mongoose.Schema(
     url: { type: String, required: true, unique: true },
     content: { type: String, required: true },
     author: { type: String, required: true },
+    category: { type: String, required: false },
+    subCategory: { type: String, required: false },
     image: { type: String, required: false },
     shortDescription: { type: String, required: true },
     metaTitle: { type: String, required: true },
